@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="./favicon.ico">
+<title>URL Generator</title>
+<style>
+  :root {
+    --bg: #f4f5f7;
+    --surface: #ffffff;
+    --border: #e1e4e9;
+    --text: #1c2024;
+    --text-muted: #6b7280;
+    --accent: #5b5bd6;
+    --accent-hover: #4a4ac9;
+    --mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    font-family: var(--sans);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 48px 20px;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 720px;
+  }
+
+  header {
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+
+  header p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .field {
+    margin-bottom: 20px;
+  }
+
+  textarea,
+  input[type="text"] {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fafbfc;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 12px 14px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 220px;
+    line-height: 1.5;
+  }
+
+  input[type="text"] {
+    height: 40px;
+  }
+
+  textarea:focus,
+  input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(91, 91, 214, 0.12);
+    background: var(--surface);
+  }
+
+  textarea::placeholder,
+  input::placeholder {
+    color: #9aa1ac;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  button {
+    appearance: none;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, transform 0.05s;
+  }
+
+  #submitBtn {
+    background: var(--accent);
+    color: #fff;
+    padding: 10px 20px;
+  }
+
+  #submitBtn:hover { background: var(--accent-hover); }
+  #submitBtn:active { transform: scale(0.98); }
+
+  #copy {
+    background: var(--surface);
+    color: var(--accent);
+    border: 1px solid var(--border);
+    padding: 9px 16px;
+    display: none;
+  }
+
+  #copy:hover {
+    border-color: var(--accent);
+    background: #f4f4fd;
+  }
+
+  #copy.copied {
+    color: #1a7f4f;
+    border-color: #b6e6cf;
+    background: #eafbf3;
+  }
+
+  .output-section {
+    margin-top: 28px;
+  }
+
+  .output-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .output-header label { margin-bottom: 0; }
+
+  #list {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+    background: #fafbfc;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text);
+    min-height: 48px;
+  }
+
+  #list:empty::before {
+    content: "Generated URLs will appear here";
+    color: #9aa1ac;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>URL generator</h1>
+    </header>
+
+    <div class="card">
+      <div class="field">
+        <label for="url">File paths</label>
+        <textarea name="url" id="url" rows="10" placeholder="https://ocbc.ext1.wearesection.com/iwov-resources/sg/ocbc/personal/edm/banner-1.jpg&#10;https://ocbc.ext1.wearesection.com/iwov-resources/sg/ocbc/personal/edm/banner-2.jpg"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="newUrl">Replace with</label>
+        <input type="text" id="newUrl" placeholder="https://www.ocbc.com/iwov-resources/sg/ocbc/personal/edm/">
+      </div>
+
+      <div class="actions">
+        <button id="submitBtn">Generate</button>
+        <button id="copy">Copy</button>
+      </div>
+
+      <div class="output-section">
+        <div class="output-header">
+          <label>Result</label>
+        </div>
+        <p id="list"></p>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const btn = document.getElementById('submitBtn');
+  const copyBtn = document.getElementById('copy');
+
+  btn.addEventListener('click', function (e) {
+    e.preventDefault();
+    const urlAll = document.getElementById('url').value;
+    const newUrl = document.getElementById('newUrl').value;
+    const listEl = document.getElementById('list');
+    listEl.innerText = '';
+    copyBtn.style.display = 'none';
+    copyBtn.classList.remove('copied');
+    copyBtn.textContent = 'Copy';
+
+    if (!urlAll.length || !newUrl.length) {
+      console.log('insert both field');
+      return;
+    }
+
+    const urlSplit = urlAll.split(/\r?\n/);
+    let result = '';
+    urlSplit.forEach(el => {
+      if (!el.trim()) return;
+      const cleanPath = el.replace(/"/g, '');
+      const filename = cleanPath.substring(cleanPath.lastIndexOf('\\') + 1);
+      const newPath = newUrl + filename;
+      result += newPath + '\n';
+    });
+
+    listEl.innerText = result;
+
+    if (result) {
+      copyBtn.style.display = 'inline-block';
+    }
+  });
+
+  copyBtn.addEventListener('click', function () {
+    const list = document.getElementById('list').innerText;
+    navigator.clipboard.writeText(list).then(() => {
+      copyBtn.textContent = 'Copied';
+      copyBtn.classList.add('copied');
+      setTimeout(() => {
+        copyBtn.textContent = 'Copy';
+        copyBtn.classList.remove('copied');
+      }, 1500);
+    });
+  });
+</script>
+</body>
+</html>
