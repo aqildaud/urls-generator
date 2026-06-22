@@ -245,7 +245,8 @@
     urlSplit.forEach(el => {
       if (!el.trim()) return;
       const cleanPath = el.replace(/"/g, '');
-      const filename = cleanPath.substring(cleanPath.lastIndexOf('\\') + 1);
+      const separatorIndex = Math.max(cleanPath.lastIndexOf('\\'), cleanPath.lastIndexOf('/'));
+      const filename = cleanPath.substring(separatorIndex + 1);
       const newPath = newUrl + filename;
       result += newPath + '\n';
     });
